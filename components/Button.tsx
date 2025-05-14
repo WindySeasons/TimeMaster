@@ -1,4 +1,5 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
@@ -6,6 +7,7 @@ type Props = {
     theme?: 'primary';
     onPress?: () => void;
 };
+
 
 export default function Button({ label, theme, onPress }: Props) {
     if (theme === 'primary') {

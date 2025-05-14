@@ -1,7 +1,7 @@
 import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from "react-native";
 const PlaceholderImage = require('@/assets/images/background-image.png');
 

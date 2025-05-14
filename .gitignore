@@ -36,4 +36,12 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Ignored build and generated files
+android/build/
+android/app/build/
+android/local.properties
+android/.gradle/
+android/.idea/
+android/app/debug.keystore
+
 app-example

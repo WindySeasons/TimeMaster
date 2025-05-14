@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.huachen.TimeMaster"
     },
     "web": {
       "bundler": "metro",
@@ -44,10 +45,17 @@
             "useSQLCipher": false
           }
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4f51a101-2091-449e-92f3-adee29bda621"
+      }
     }
   }
 }

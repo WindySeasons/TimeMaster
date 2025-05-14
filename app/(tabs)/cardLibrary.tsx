@@ -1,9 +1,18 @@
+import DataPickerView from '@/components/DataPickerView';
+import ProjectView from '@/components/ProjectView';
 import TaskCard from '@/components/TaskCard';
+import React from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 
 export default function CardLibraryScreen() {
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container} nestedScrollEnabled={true}>
+
+            <ProjectView>
+
+            </ProjectView>
+
+            <DataPickerView />
             <TaskCard
                 starRating={3}
                 taskName="学习学习嘻嘻嘻离开家离开家离开家"
