@@ -1,4 +1,5 @@
-import { addTask, getTasks, initializeDatabase, updateTask } from '@/app/database';
+import { initializeDatabase } from '@/app/database';
+import { addTask, getTasks, updateTask } from '@/app/services/TaskService'; // 从 TaskService 引入任务相关函数
 import React, { useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 

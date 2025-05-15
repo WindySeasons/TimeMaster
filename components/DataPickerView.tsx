@@ -24,13 +24,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonStyle: {
-        backgroundColor: 'rgba(78, 116, 289, 1)',
+        backgroundColor: '#f5f5f5', // 极简主义浅灰背景
         borderRadius: 3,
     },
     buttonContainer: {
         width: screenWidth * 0.9,
         marginHorizontal: 50,
         marginVertical: 10,
+    },
+    buttonText: {
+        color: '#000', // 黑色字体
+        fontSize: 14, // 调整字体大小
     },
 });
 
@@ -54,6 +58,7 @@ export default function DataPickerView() {
                     onPress={() => setIsVisible(true)}
                     buttonStyle={styles.buttonStyle}
                     containerStyle={styles.buttonContainer}
+                    titleStyle={styles.buttonText}
                 />
                 <DatePickerModal
                     locale="zh"
