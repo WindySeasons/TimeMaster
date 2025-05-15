@@ -4,11 +4,15 @@ import { Task } from "../entities/Task";
 // 添加任务
 export const addTask = async (task: Partial<Task>) => {
     try {
+        const newTask: Partial<Task> = {
+            ...task,
+            start_time: task.start_time ? Math.floor(task.start_time / 1000) : 0, // 转换为秒级时间戳
+            end_time: task.end_time ? Math.floor(task.end_time / 1000) : undefined, // 确保与 TypeORM 类型兼容
+        };
+
         const taskRepository = AppDataSource.getRepository(Task);
-        const newTask = taskRepository.create(task);
-        await taskRepository.save(newTask);
-        console.log("Task added successfully:", newTask);
-        return newTask;
+        const createdTask = taskRepository.create(newTask);
+        return await taskRepository.save(createdTask);
     } catch (error) {
         console.error("Error adding task:", error);
         throw error;

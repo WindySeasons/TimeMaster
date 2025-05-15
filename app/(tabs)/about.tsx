@@ -11,23 +11,29 @@ export default function AboutScreen() {
 
     const handleAddTask = async () => {
         await addTask({
-            name: '测试任务',
-            start_time: new Date().toISOString(),
-            end_time: new Date().toISOString(),
-            duration: 60,
+            project_name: '测试项目',
+            start_time: Date.now(), // 使用时间戳存储当前时间
+            end_time: Date.now() + 3600000, // 一小时后
+            duration: 3600, // 持续时间以秒为单位
             reflection: '这是一个测试任务',
-            rating: 5,
+            pre_project_id: undefined, // 无前置项目
+            rating: 3,
         });
         console.log('Task added');
     };
 
     const handleGetTasks = async () => {
         const tasks = await getTasks();
-        console.log('Tasks:', tasks);
+        const formattedTasks = tasks.map(task => ({
+            ...task,
+            start_time: new Date(task.start_time * 1000).toISOString(), // 转换为 ISO 时间格式
+            end_time: task.end_time ? new Date(task.end_time * 1000).toISOString() : null, // 处理可能为 null 的值
+        }));
+        console.log('Tasks:', formattedTasks);
     };
 
     const handleUpdateTask = async () => {
-        await updateTask(1, { name: '更新后的任务名称' });
+        await updateTask(1, { project_name: '更新后的任务名称' });
         console.log('Task updated');
     };
 

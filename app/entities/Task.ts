@@ -5,20 +5,24 @@ export class Task {
     @PrimaryGeneratedColumn()
     id: number = 0;
 
-    @Column({ type: "text", nullable: false })
-    name: string = "";
 
     @Column({ type: "text", nullable: false })
-    start_time: string = "";
-
-    @Column({ type: "text", nullable: false })
-    end_time: string = "";
+    project_name: string = "DEFAULT";
 
     @Column({ type: "integer", nullable: false })
-    duration: number = 0;
+    start_time: number = 0;
+
+    @Column({ type: "integer", nullable: true })
+    end_time?: number;
+
+    @Column({ type: "integer", nullable: true })
+    duration?: number;
 
     @Column({ type: "text", nullable: true })
     reflection?: string;
+
+    @Column({ type: "integer", nullable: true })
+    pre_project_id?: number;
 
     @Column({ type: "integer", nullable: true })
     rating?: number;

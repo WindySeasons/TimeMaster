@@ -16,6 +16,24 @@ export const AppDataSource = new DataSource({
 export const initializeDatabase = async () => {
     try {
         await AppDataSource.initialize();
+
+        // 删除旧的 tasks 表（如果存在）
+        await AppDataSource.query(`DROP TABLE IF EXISTS tasks;`);
+
+        // 创建新的 tasks 表
+        await AppDataSource.query(`
+            CREATE TABLE tasks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                project_name TEXT NOT NULL,
+                start_time INTEGER NOT NULL,
+                end_time INTEGER ,
+                duration INTEGER ,
+                reflection TEXT,
+                pre_project_id INTEGER,
+                rating INTEGER CHECK(rating >= 1 AND rating <= 3)
+            );
+        `);
+
         console.log("Database initialized successfully");
     } catch (error) {
         console.error("Error initializing database:", error);
