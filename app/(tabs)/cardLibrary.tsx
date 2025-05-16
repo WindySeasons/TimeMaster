@@ -8,12 +8,40 @@ import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Task } from '../entities/Task';
-import { getTasks } from '../services/TaskService';
+import { getTasksByTimeRange } from '../services/TaskService';
 
 export default function CardLibraryScreen() {
     const router = useRouter();
     const [refreshing, setRefreshing] = useState(false);
     const [tasks, setTasks] = useState<Task[]>([]);
+
+    // 默认时间范围为今天
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
+        startDate: today,
+        endDate: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1),
+    });
+
+    const fetchTasks = async (range = dateRange) => {
+        try {
+            if (range.startDate && range.endDate) {
+                const start = Math.floor(range.startDate.getTime() / 1000);
+                const end = Math.floor(range.endDate.getTime() / 1000);
+                const data = await getTasksByTimeRange(start, end);
+                setTasks(data);
+            } else {
+                setTasks([]);
+            }
+        } catch (e) {
+            setTasks([]);
+        }
+    };
+
+    const onRangeChange = (range: { startDate: Date | null; endDate: Date | null }) => {
+        setDateRange(range);
+        fetchTasks(range);
+    };
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -23,15 +51,6 @@ export default function CardLibraryScreen() {
         }, 2000);
     };
 
-    const fetchTasks = async () => {
-        try {
-            const data = await getTasks();
-            setTasks(data);
-        } catch (e) {
-            setTasks([]);
-        }
-    };
-
     useEffect(() => {
         fetchTasks();
     }, []);
@@ -39,7 +58,7 @@ export default function CardLibraryScreen() {
     useFocusEffect(
         React.useCallback(() => {
             fetchTasks();
-        }, [])
+        }, [dateRange])
     );
 
     // 工具函数：将秒数格式化为“xx天xx小时xx分钟”
@@ -70,7 +89,11 @@ export default function CardLibraryScreen() {
 
                 </ProjectView>
 
-                <DataPickerView />
+                <DataPickerView
+                    startDate={dateRange.startDate}
+                    endDate={dateRange.endDate}
+                    onRangeChange={onRangeChange}
+                />
 
                 <View style={styles.buttonRow}>
                     <Button

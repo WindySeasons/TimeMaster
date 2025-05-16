@@ -9,13 +9,11 @@ registerTranslation('zh', zh);
 
 const screenWidth = Dimensions.get('window').width;
 
-type DataPickerViewProps = {
+interface DataPickerViewProps {
     startDate: Date | null;
     endDate: Date | null;
-    isVisible: boolean;
-    onConfirm: ({ startDate, endDate }: { startDate: Date | undefined; endDate: Date | undefined }) => void;
-    onDismiss: () => void;
-};
+    onRangeChange: (range: { startDate: Date | null; endDate: Date | null }) => void;
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -38,23 +36,35 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function DataPickerView() {
-    const [range, setRange] = useState<{ startDate: Date | null; endDate: Date | null }>({ startDate: null, endDate: null });
+export default function DataPickerView({ startDate, endDate, onRangeChange }: DataPickerViewProps) {
     const [isVisible, setIsVisible] = useState(false);
+    const range = { startDate, endDate };
 
     const onConfirm = ({ startDate, endDate }: { startDate: Date | undefined; endDate: Date | undefined }) => {
-        setRange({ startDate: startDate || null, endDate: endDate || null });
+        onRangeChange({ startDate: startDate || null, endDate: endDate || null });
         setIsVisible(false);
     };
+
+    // 优化统计周期显示逻辑
+    let periodLabel = '今天';
+    if (range.startDate && range.endDate) {
+        const startStr = range.startDate.toLocaleDateString();
+        const endStr = range.endDate.toLocaleDateString();
+        const todayStr = new Date().toLocaleDateString();
+        if (startStr === todayStr && endStr === todayStr) {
+            periodLabel = '今天';
+        } else if (startStr === endStr) {
+            periodLabel = startStr;
+        } else {
+            periodLabel = `${startStr} - ${endStr}`;
+        }
+    }
 
     return (
         <SafeAreaProvider>
             <View style={styles.container}>
                 <Button
-                    title={`统计周期: ${range.startDate && range.endDate
-                        ? `${range.startDate.toLocaleDateString()} - ${range.endDate.toLocaleDateString()}`
-                        : "今天"
-                        }`}
+                    title={`统计周期: ${periodLabel}`}
                     onPress={() => setIsVisible(true)}
                     buttonStyle={styles.buttonStyle}
                     containerStyle={styles.buttonContainer}

@@ -32,6 +32,23 @@ export const getTasks = async () => {
     }
 };
 
+// 按时间范围获取任务
+export const getTasksByTimeRange = async (start: number, end: number) => {
+    try {
+        const taskRepository = AppDataSource.getRepository(Task);
+        // 查询 end_time 在 [start, end] 区间的任务
+        const tasks = await taskRepository.createQueryBuilder('task')
+            .where('task.start_time >= :start', { start })
+            .andWhere('task.start_time <= :end', { end })
+            .orderBy('task.end_time', 'DESC')
+            .getMany();
+        return tasks;
+    } catch (error) {
+        console.error("Error fetching tasks by time range:", error);
+        throw error;
+    }
+};
+
 // 更新任务
 export const updateTask = async (id: number, updates: Partial<Task>) => {
     try {
