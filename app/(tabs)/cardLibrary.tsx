@@ -1,31 +1,66 @@
 import DataPickerView from '@/components/DataPickerView';
 import ProjectView from '@/components/ProjectView';
 import TaskCard from '@/components/TaskCard';
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Task } from '../entities/Task';
+import { getTasks } from '../services/TaskService';
 
 export default function CardLibraryScreen() {
     const router = useRouter();
     const [refreshing, setRefreshing] = useState(false);
+    const [tasks, setTasks] = useState<Task[]>([]);
 
     const onRefresh = () => {
         setRefreshing(true);
-        // 模拟数据刷新
+        fetchTasks();
         setTimeout(() => {
             setRefreshing(false);
-        }, 2000); // 2秒后停止刷新
+        }, 2000);
     };
+
+    const fetchTasks = async () => {
+        try {
+            const data = await getTasks();
+            setTasks(data);
+        } catch (e) {
+            setTasks([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchTasks();
+    }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchTasks();
+        }, [])
+    );
+
+    // 工具函数：将秒数格式化为“xx天xx小时xx分钟”
+    function formatDuration(seconds: number) {
+        if (!seconds || isNaN(seconds)) return '';
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor((seconds % 86400) / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        let result = '';
+        if (days > 0) result += `${days}天`;
+        if (hours > 0) result += `${hours}小时`;
+        if (minutes > 0) result += `${minutes}分钟`;
+        if (!result) result = '0分钟';
+        return result;
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: '#25292e' }}>
             <ScrollView
-                contentContainerStyle={[styles.container]} // 设置背景颜色
-
+                contentContainerStyle={[styles.container]}
                 nestedScrollEnabled={true}
-
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
@@ -67,55 +102,18 @@ export default function CardLibraryScreen() {
                     </Button>
                 </View>
 
-                <TaskCard
-                    starRating={3}
-                    taskName="学习学习嘻嘻嘻离开家离开家离开家"
-                    dueDate="2023-11-15 14:00"
-                    duration="90分钟"
-                    taskThoughts="Need to finish the state management section before moving on"
-                    leftContent={() => <Text>📱</Text>}
-                />
-                <TaskCard
-                    starRating={2}
-                    taskName="Write Documentation"
-                    dueDate="2023-11-20 09:30"
-                    duration="45分钟"
-                    taskThoughts="API reference needs updating with the new endpoints"
-                    leftContent={() => <Text>📝</Text>}
-                />
-                <TaskCard
-                    starRating={1}
-                    taskName="Team Meeting"
-                    dueDate="2023-11-10 10:00"
-                    duration="120分钟"
-                    taskThoughts="Prepare quarterly roadmap presentation"
-                    leftContent={() => <Text>👥</Text>}
-                />
+                {tasks.map(task => (
+                    <TaskCard
+                        key={task.id}
+                        starRating={task.rating || 1}
+                        taskName={task.project_name}
+                        dueDate={task.end_time ? new Date(task.end_time * 1000).toLocaleString() : ''}
+                        duration={task.duration ? formatDuration(task.duration) : ''}
+                        taskThoughts={task.reflection || ''}
+                        leftContent={() => <Text>📋</Text>}
+                    />
+                ))}
 
-                <TaskCard
-                    starRating={3}
-                    taskName="学习学习嘻嘻嘻离开家离开家离开家"
-                    dueDate="2023-11-15 14:00"
-                    duration="90分钟"
-                    taskThoughts="Need to finish the state management section before moving on"
-                    leftContent={() => <Text>📱</Text>}
-                />
-                <TaskCard
-                    starRating={2}
-                    taskName="Write Documentation"
-                    dueDate="2023-11-20 09:30"
-                    duration="45分钟"
-                    taskThoughts="API reference needs updating with the new endpoints"
-                    leftContent={() => <Text>📝</Text>}
-                />
-                <TaskCard
-                    starRating={1}
-                    taskName="Team Meeting"
-                    dueDate="2023-11-10 10:00"
-                    duration="120分钟"
-                    taskThoughts="Prepare quarterly roadmap presentation"
-                    leftContent={() => <Text>👥</Text>}
-                />
             </ScrollView>
         </View>
     );

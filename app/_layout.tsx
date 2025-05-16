@@ -1,8 +1,13 @@
 import { Stack } from "expo-router";
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
+import { initializeDatabase } from './database';
 
 export default function RootLayout() {
+  useEffect(() => {
+    initializeDatabase();
+  }, []);
+
   return (
     <PaperProvider>
       <Stack>

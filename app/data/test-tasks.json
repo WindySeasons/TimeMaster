@@ -1,0 +1,92 @@
+[
+    {
+        "project_name": "智慧城市平台",
+        "start_time": 1746057600,
+        "end_time": 1746057660,
+        "duration": 60,
+        "reflection": "完成了智慧城市平台的初步测试，发现了一些接口兼容性问题，已修复。整体进展顺利。",
+        "pre_project_id": null,
+        "rating": 2
+    },
+    {
+        "project_name": "在线医疗咨询",
+        "start_time": 1746230400,
+        "end_time": 1746241200,
+        "duration": 10800,
+        "reflection": "优化了在线医疗咨询的响应速度，用户满意度显著提升。测试覆盖率达标。",
+        "pre_project_id": null,
+        "rating": 3
+    },
+    {
+        "project_name": "金融数据分析",
+        "start_time": 1746403200,
+        "end_time": 1746489601,
+        "duration": 86401,
+        "reflection": "对金融数据进行了深度分析，发现了一些潜在风险点。团队协作高效，结果令人满意。",
+        "pre_project_id": null,
+        "rating": 1
+    },
+    {
+        "project_name": "智能物流系统",
+        "start_time": 1746576000,
+        "end_time": 1746662401,
+        "duration": 86401,
+        "reflection": "修复了智能物流系统的路径规划问题，效率提升了20%。客户反馈积极。",
+        "pre_project_id": null,
+        "rating": 3
+    },
+    {
+        "project_name": "区块链投票",
+        "start_time": 1746748800,
+        "end_time": 1746921601,
+        "duration": 172801,
+        "reflection": "完成了区块链投票系统的安全性测试，用户对透明度和可靠性表示认可。",
+        "pre_project_id": null,
+        "rating": 1
+    },
+    {
+        "project_name": "智能客服升级",
+        "start_time": 1747008000,
+        "end_time": 1747011600,
+        "duration": 3600,
+        "reflection": "升级了智能客服的对话逻辑，响应速度提升了30%。用户反馈更加积极。",
+        "pre_project_id": null,
+        "rating": 3
+    },
+    {
+        "project_name": "电商推荐算法",
+        "start_time": 1747094400,
+        "end_time": 1747105200,
+        "duration": 10800,
+        "reflection": "优化了电商推荐算法，点击率提升了15%。测试结果符合预期。",
+        "pre_project_id": null,
+        "rating": 2
+    },
+    {
+        "project_name": "自动驾驶测试",
+        "start_time": 1747180800,
+        "end_time": 1747180860,
+        "duration": 60,
+        "reflection": "快速解决了自动驾驶测试中的紧急问题，避免了系统宕机。团队反应迅速。",
+        "pre_project_id": null,
+        "rating": 2
+    },
+    {
+        "project_name": "社交媒体分析",
+        "start_time": 1747267200,
+        "end_time": 1747353601,
+        "duration": 86401,
+        "reflection": "分析了社交媒体上的用户行为数据，为营销策略提供了有力支持。",
+        "pre_project_id": null,
+        "rating": 2
+    },
+    {
+        "project_name": "金融风控升级",
+        "start_time": 1747440000,
+        "end_time": 1747526401,
+        "duration": 86401,
+        "reflection": "升级了金融风控系统的规则引擎，误报率降低了15%。客户信任度提升。",
+        "pre_project_id": null,
+        "rating": 1
+    }
+]

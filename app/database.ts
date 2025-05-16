@@ -35,6 +35,7 @@ export const initializeDatabase = async () => {
         // 3. 逐步升级数据库结构
         if (dbVersion < 1) {
             // v1: 创建 tasks 表
+            //await AppDataSource.query(`DROP TABLE IF EXISTS tasks;`);
             await AppDataSource.query(`
                 CREATE TABLE IF NOT EXISTS tasks (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
