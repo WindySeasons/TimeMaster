@@ -2,6 +2,7 @@ import { addTask, getTasks, updateTask } from '@/app/services/TaskService'; // �
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { AppDataSource } from '../database';
+import { MetaService } from '../services/MetaService';
 
 export default function AboutScreen() {
 
@@ -76,6 +77,11 @@ export default function AboutScreen() {
         }
     };
 
+    const handleLogAllMeta = async () => {
+        const allMeta = await MetaService.getAll();
+        console.log('Meta表所有key-value:', allMeta);
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.text}>About screen</Text>
@@ -84,6 +90,7 @@ export default function AboutScreen() {
             <Button title="更新任务" onPress={handleUpdateTask} />
             <Button title="重建任务表（开发用）" onPress={handleResetTasksTable} />
             <Button title="批量导入测试数据" onPress={handleImportTestTasks} />
+            <Button title="查看Meta表所有key-value" onPress={handleLogAllMeta} />
         </View>
     );
 }

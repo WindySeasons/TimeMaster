@@ -15,6 +15,9 @@ export const AppDataSource = new DataSource({
 
 const CURRENT_DB_VERSION = 1; // 当前数据库版本号，可根据需要递增
 
+// 全局变量保存当前任务ID
+export let globalCurrentTaskId: number | null = null;
+
 // 初始化数据库
 export const initializeDatabase = async () => {
     try {
@@ -27,6 +30,16 @@ export const initializeDatabase = async () => {
                 value TEXT
             );
         `);
+
+        // 1.1 初始化 current_task_id（如不存在）
+        const currentTaskIdResult = await AppDataSource.query(`SELECT value FROM meta WHERE key = 'current_task_id';`);
+        if (currentTaskIdResult.length === 0) {
+            await AppDataSource.query(`INSERT OR IGNORE INTO meta (key, value) VALUES ('current_task_id', '1');`);
+            globalCurrentTaskId = 1;
+        } else {
+            const val = currentTaskIdResult[0].value;
+            globalCurrentTaskId = val === null || val === undefined ? null : Number(val);
+        }
 
         // 2. 获取当前数据库版本号
         const result = await AppDataSource.query(`SELECT value FROM meta WHERE key = 'db_version';`);

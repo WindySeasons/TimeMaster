@@ -4,11 +4,15 @@ import TaskCard from '@/components/TaskCard';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
+import Animated from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Task } from '../entities/Task';
 import { getTasksByTimeRange } from '../services/TaskService';
+
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function CardLibraryScreen() {
     const router = useRouter();
@@ -138,6 +142,31 @@ export default function CardLibraryScreen() {
                 ))}
 
             </ScrollView>
+            <AnimatedPressable
+                style={{
+                    position: 'absolute',
+                    right: 18,
+                    bottom: 28,
+                    backgroundColor: 'rgba(37,41,46,0.92)', // 深色半透明
+                    borderRadius: 28,
+                    width: 56,
+                    height: 56,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    elevation: 8,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 8,
+                    borderWidth: 2,
+                    borderColor: '#fff', // 白色描边
+                }}
+                onPress={() => {
+                    router.push('/AddTaskPage');
+                }}
+            >
+                <Icon name="plus" size={32} color="#ffd33d" />
+            </AnimatedPressable>
         </View>
     );
 }
@@ -145,7 +174,7 @@ export default function CardLibraryScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        //flexGrow: 1,
         padding: 16,
         backgroundColor: '#25292e',
     },

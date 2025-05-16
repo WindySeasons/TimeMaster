@@ -83,7 +83,7 @@ TimeMaster/
 
 - **清理缓存**：
   ```bash
-  expo start -c
+  npx expo start -c
   ```
 
 ## 学习更多
