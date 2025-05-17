@@ -1,4 +1,4 @@
-import { Input } from '@rneui/themed';
+import { Button, Input } from '@rneui/themed';
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -16,6 +16,7 @@ import { Task } from './entities/Task';
 export default function AddTaskPage() {
     const [content, setContent] = useState(initialContent);
     const [inputValue, setInputValue] = useState('');
+    const [rating, setRating] = useState(1);
 
     useEffect(() => {
         const fetchTask = async () => {
@@ -113,11 +114,64 @@ export default function AddTaskPage() {
                             style={{
                                 backgroundColor: '#fff',
                                 borderRadius: 8,
-                                marginBottom: 16,
-                                minHeight: 280,
+                                marginBottom: 2, // 更紧凑
+                                minHeight: 400,
                             }}
                         />
+                        <Input
+                            containerStyle={{ marginTop: 0, marginBottom: 0, paddingHorizontal: 0 }}
+                            inputContainerStyle={{ borderBottomWidth: 0, borderWidth: 0, elevation: 0, backgroundColor: 'transparent', paddingHorizontal: 0 }}
+                            inputStyle={{ fontSize: 14, color: '#25292e', backgroundColor: '#fff', borderRadius: 0, paddingHorizontal: 0, minHeight: 50, width: '100%' }}
+                            placeholder="下一个项目，用/分级，非必填"
+                            leftIconContainerStyle={{}}
+                            rightIconContainerStyle={{}}
+                            errorMessage={undefined}
+                            renderErrorMessage={false}
+                        />
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                marginTop: 0,
+                                marginBottom: 8,
+                                paddingVertical: 8,
+                                paddingHorizontal: 12,
+                                backgroundColor: 'rgba(120,180,255,0.08)',
+                                borderRadius: 0,
+                                shadowColor: '#ffd33d',
+                                shadowOffset: { width: 0, height: 2 },
+                                shadowOpacity: 0.10,
+                                shadowRadius: 8,
+                                gap: 6,
+                            }}
+                        >
+                            <RNText style={{ color: '#25292e', fontSize: 10, fontWeight: 'bold', marginRight: 8, fontFamily: 'serif', letterSpacing: 1 }}>你享受这段时间吗：</RNText>
+                            {[1, 2, 3].map(star => (
+                                <TouchableOpacity
+                                    key={star}
+                                    onPress={() => setRating(star)}
+                                    style={{ marginHorizontal: 2, borderRadius: 12, padding: 2, backgroundColor: rating === star ? '#ffd33d33' : 'transparent' }}
+                                    activeOpacity={0.7}
+                                >
+                                    <RNText style={{ fontSize: 28, color: rating >= star ? '#ffd33d' : '#ccc', textShadowColor: rating >= star ? '#ffd33d55' : 'transparent', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>
+                                        ★
+                                    </RNText>
+                                </TouchableOpacity>
+                            ))}
+                            <RNText style={{ fontSize: 22, marginLeft: 10, fontFamily: 'serif', textShadowColor: '#ffd33d44', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>
+                                {rating === 1 ? '😞' : rating === 2 ? '😐' : '😄'}
+                            </RNText>
+                        </View>
                     </Card>
+                    <View style={{ alignItems: 'center', marginTop: 16 }}>
+                        <Button
+                            title="添加卡片"
+                            buttonStyle={{ backgroundColor: '#f5f5f5', borderRadius: 3 }}
+                            containerStyle={{ width: '100%', marginHorizontal: 50, marginVertical: 10 }}
+                            titleStyle={{ color: '#000', fontSize: 20 }}
+                            onPress={() => { /* 添加卡片逻辑 */ }}
+                        />
+                    </View>
                 </ScrollView>
             </View>
         </>

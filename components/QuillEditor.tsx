@@ -17,7 +17,7 @@ const quillTemplate = `
   <style>
     #editor {
       width: 100%;
-      min-height: 70vh;
+      min-height: 80vh;
       box-sizing: border-box;
     }
     .ql-editor {
