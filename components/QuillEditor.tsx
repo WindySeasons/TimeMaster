@@ -12,8 +12,37 @@ const quillTemplate = `
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <style>
+    #editor {
+      width: 100%;
+      min-height: 70vh;
+      box-sizing: border-box;
+    }
+    .ql-editor {
+      height: 60vh;
+      min-height: 60vh;
+      max-height: 60vh;
+      overflow-y: auto;
+      /* 滚动条样式 */
+      scrollbar-width: thin;
+      scrollbar-color: #25292e #e0e0e0;
+    }
+    /* Webkit滚动条样式 */
+    .ql-editor::-webkit-scrollbar {
+      width: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+    }
+    .ql-editor::-webkit-scrollbar-thumb {
+      background:#25292e;
+      border-radius: 4px;
+    }
+    .ql-editor::-webkit-scrollbar-thumb:hover {
+      background: #25292e;
+    }
+  </style>
 </head>
 <body>
   <div id="editor"></div>
@@ -94,19 +123,18 @@ export default function QuillEditor({ value, onChange, style }: QuillEditorProps
     }
 
     return (
+
         <WebView
             ref={webviewRef}
             originWhitelist={["*"]}
             source={{ html: quillTemplate }}
-            style={[{ minHeight: 200, backgroundColor: '#fff' }, style]}
+            style={[{ backgroundColor: '#fff' }, style]}
             javaScriptEnabled
             domStorageEnabled
             onMessage={handleMessage}
             // 允许 WebView 访问本地资源
             allowFileAccess
             allowUniversalAccessFromFileURLs
-            // 禁止缩放
-            scalesPageToFit={false}
         />
     );
 }
