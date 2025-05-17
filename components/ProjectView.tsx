@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, Chip } from 'react-native-paper';
@@ -6,6 +7,16 @@ type Props = {
 };
 const screenWidth = Dimensions.get('window').width;
 export default function ProjectView({ }: Props) {
+    const router = useRouter();
+    const debounceRef = React.useRef<any>(null); // 兼容 web/原生 setTimeout
+    const handleEditProjects = React.useCallback(() => {
+        if (debounceRef.current) return;
+        debounceRef.current = setTimeout(() => {
+            debounceRef.current = null;
+        }, 800);
+        router.push('/ProjectsEditPage');
+    }, [router]);
+
     return (
 
         <View style={styles.container}>
@@ -37,7 +48,7 @@ export default function ProjectView({ }: Props) {
                     </ScrollView>
                 </Card.Content>
 
-                <Button icon="pencil" mode="outlined" onPress={() => console.log('Pressed')} style={styles.button} >
+                <Button icon="pencil" mode="outlined" onPress={handleEditProjects} style={styles.button} >
                     编辑预设项目
                 </Button>
             </Card>
