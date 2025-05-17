@@ -1,3 +1,18 @@
+<!-- filepath: j:\soofware_develop\TimeMaster\README.md -->
+<p align="center">
+  <img src="assets/images/icon.png" width="120" alt="TimeMaster Logo" />
+</p>
+
+<h1 align="center">TimeMaster ⏰</h1>
+<p align="center"><b>让每一分钟都被善待</b></p>
+
+---
+
+> “时间就像海绵里的水，只要愿挤，总还是有的。”  
+> <sub>—— TimeMaster 开发者寄语</sub>
+
+---
+
 # TimeMaster 项目 👋
 
 TimeMaster 是一个基于 [Expo](https://expo.dev) 的跨平台应用，旨在帮助用户高效管理时间和任务。
@@ -8,7 +23,7 @@ TimeMaster 是一个基于 [Expo](https://expo.dev) 的跨平台应用，旨在�
 - ⏳ 自动统计任务用时，支持时间区间筛选
 - 📊 数据可视化：时间统计、体验统计、感悟等
 - 🗂️ 项目库与任务库分离，支持项目预设与切换
-- 🖋️ 富文本编辑器，支持多样化内容输入
+- 🖋️ 富文本编辑器，支持多样化内容输入（基于 Quill.js，WebView 集成）
 - 🌙 深色主题适配，界面美观现代
 - 📱 支持 Android/iOS 跨平台
 
@@ -17,7 +32,7 @@ TimeMaster 是一个基于 [Expo](https://expo.dev) 的跨平台应用，旨在�
 - React Native + Expo
 - TypeORM + SQLite（本地数据库）
 - React Native Paper / RNEUI（UI 组件库）
-- Quill.js（富文本编辑器，WebView 集成）
+- Quill.js（富文本编辑器，WebView 集成，静态资源本地化于 assets/quill/）
 - TypeScript 全面类型安全
 
 ## 运行环境要求
@@ -47,6 +62,11 @@ TimeMaster 是一个基于 [Expo](https://expo.dev) 的跨平台应用，旨在�
    - [Android 模拟器](https://docs.expo.dev/workflow/android-studio-emulator/)
    - [iOS 模拟器](https://docs.expo.dev/workflow/ios-simulator/)
    - [Expo Go](https://expo.dev/go)：一个用于快速体验 Expo 应用开发的沙盒环境
+
+3. **本地静态资源说明**
+
+   - Quill.js 及 quill.snow.css 已放置于 `assets/quill/` 目录，富文本编辑器无需外网即可加载。
+   - 若需升级 Quill 版本，请手动替换 `assets/quill/quill.js` 和 `assets/quill/quill.snow.css`。
 
 ## 项目结构
 
@@ -111,25 +131,29 @@ TimeMaster/
   npx expo start -c
   ```
 
-## 学习更多
+## 开发建议
 
-- [Expo 文档](https://docs.expo.dev/): 学习基础知识或探索高级主题。
-- [TypeORM 文档](https://typeorm.io/): 学习如何使用 TypeORM 管理数据库。
-- [React Native 文档](https://reactnative.dev/): 深入了解 React Native 的开发。
+- 推荐使用 VSCode + Prettier/ESLint 保持代码风格统一。
+- 组件开发建议拆分到 `components/`，业务逻辑放在 `services/`。
+- 富文本编辑器如需自定义工具栏或样式，可修改 `components/QuillEditor.tsx` 及 `assets/quill/` 下资源。
+- 数据库结构变更请同步更新 `entities/` 和 `services/`。
 
 ## 常见问题 FAQ
 
+- **Q: 富文本编辑器无法输入/显示异常？**
+  A: 请确保 WebView 权限正常，且 `assets/quill/` 下资源完整。
+
 - **Q: 如何重置数据库或清空所有任务？**
   A: 可在 about.tsx 页面或 scripts/reset-project.js 脚本中执行重置操作。
-
-- **Q: 富文本编辑器无法输入/显示异常？**
-  A: 请确保 WebView 权限正常，且网络可访问 Quill CDN。
 
 - **Q: 如何导入/导出任务数据？**
   A: 目前仅支持本地存储，后续可扩展云同步或导出功能。
 
 - **Q: 如何自定义主题或样式？**
   A: 可修改 components/ 下的样式文件或自定义 UI 组件。
+
+- **Q: Quill 编辑器的 divider/分割线等自定义功能如何扩展？**
+  A: 参考 `components/QuillEditor.tsx`，可自定义 toolbar、blot 等。
 
 ## 贡献
 

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { Dimensions, Modal, Pressable, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { Avatar, Card, IconButton, Text } from 'react-native-paper';
+import { WebView } from 'react-native-webview';
 
 const LeftContent = (props: any) => <Avatar.Icon {...props} icon="folder" />;
 
@@ -18,6 +19,7 @@ const screenWidth = Dimensions.get('window').width;
 
 export default function TaskCard({ leftContent = LeftContent, taskName, dueDate, starRating, taskThoughts, duration }: Props) {
     const [modalVisible, setModalVisible] = useState(false);
+    const [webViewHeight, setWebViewHeight] = useState(40);
     const displayName = taskName.length > 6 ? `${taskName.substring(0, 6)}...` : taskName;
 
     return (
@@ -41,7 +43,19 @@ export default function TaskCard({ leftContent = LeftContent, taskName, dueDate,
                     </View>
                     <Text variant="bodyMedium" style={styles.rating}>{"★".repeat(starRating)}</Text>
                 </View>
-                <Text variant="bodyMedium" style={styles.thoughts}>{taskThoughts}</Text>
+                <View style={{ minHeight: 40, marginTop: 8 }}>
+                    <WebView
+                        originWhitelist={["*"]}
+                        source={{ html: `<html><head><meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'><style>body{margin:0;padding:0;font-size:14px;color:#555;background:#f9f9f9;}img{max-width:100%;height:auto;}p{margin:0;}</style></head><body>${taskThoughts || ''}<script>function updateHeight(){window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(document.body.scrollHeight.toString());}window.onload=updateHeight;window.addEventListener('resize',updateHeight);setTimeout(updateHeight,100);</script></body></html>` }}
+                        style={{ height: webViewHeight, backgroundColor: '#f9f9f9' }}
+                        scrollEnabled={false}
+                        showsVerticalScrollIndicator={false}
+                        onMessage={event => {
+                            const h = Number(event.nativeEvent.data);
+                            if (!isNaN(h) && h > 0 && Math.abs(h - webViewHeight) > 2) setWebViewHeight(h);
+                        }}
+                    />
+                </View>
             </Card.Content>
 
             <Modal

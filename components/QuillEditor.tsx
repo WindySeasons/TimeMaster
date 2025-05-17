@@ -46,21 +46,55 @@ const quillTemplate = `
 </head>
 <body>
   <div id="editor"></div>
-  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <style>
+    /* 自定义divider按钮图标样式 */
+    .ql-divider::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 2px;
+      background: #444;
+      margin: 0 2px 2px 2px;
+      vertical-align: middle;
+    }
+  </style>
   <script>
+    // 官方Parchment指南实现divider
+    const BlockEmbed = Quill.import('blots/block/embed');
+    class DividerBlot extends BlockEmbed {
+      static create(value) {
+        let node = super.create();
+        node.setAttribute('contenteditable', false);
+        return node;
+      }
+    }
+    DividerBlot.blotName = 'divider';
+    DividerBlot.tagName = 'hr';
+    Quill.register(DividerBlot);
+
     const quill = new Quill('#editor', {
       theme: 'snow',
-      placeholder: '过去这段时间感觉怎么样...', // 这里设置提示语
+      placeholder: '过去这段时间感觉怎么样...',
       modules: {
-        toolbar: [
-         [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-          ['bold', 'italic', 'underline', 'strike'],
-          ['blockquote'],
+        toolbar: {
+          container: [
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            ['blockquote'],
             [{ 'color': [] }, { 'background': [] }],
             [{ 'align': [] }],
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }]
-           
-        ]
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+            ['divider']
+          ],
+          handlers: {
+            divider: function() {
+              const range = this.quill.getSelection(true);
+              this.quill.insertEmbed(range.index, 'divider', true, Quill.sources.USER);
+              this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
+            }
+          }
+        }
       }
     });
 
