@@ -22,8 +22,8 @@ const quillTemplate = `
     }
     .ql-editor {
       height: 60vh;
-      min-height: 60vh;
-      max-height: 60vh;
+      min-height: 80vh;
+      max-height: 80vh;
       overflow-y: auto;
       /* 滚动条样式 */
       scrollbar-width: thin;
@@ -50,6 +50,7 @@ const quillTemplate = `
   <script>
     const quill = new Quill('#editor', {
       theme: 'snow',
+      placeholder: '过去这段时间感觉怎么样...', // 这里设置提示语
       modules: {
         toolbar: [
          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
@@ -112,8 +113,8 @@ export default function QuillEditor({ value, onChange, style }: QuillEditorProps
     const handleMessage = (event: any) => {
         try {
             const data = JSON.parse(event.nativeEvent.data);
-            if (data.type === 'textChange' && onChange) {
-                onChange(data.value);
+            if ((data.type === 'textChange' || data.type === 'content-change') && onChange) {
+                onChange(data.content || data.value);
             }
         } catch { }
     };
