@@ -3,6 +3,7 @@ import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { AppDataSource } from '../database';
 import { MetaService } from '../services/MetaService';
+import { ProjectService } from '../services/ProjectService';
 
 export default function AboutScreen() {
 
@@ -82,15 +83,35 @@ export default function AboutScreen() {
         console.log('Meta表所有key-value:', allMeta);
     };
 
+    const handleGetProjects = async () => {
+        const projects = await ProjectService.getAllProjects();
+        console.log('Projects:', projects);
+    };
+
+    const handleResetProjectTable = async () => {
+        await AppDataSource.query('DROP TABLE IF EXISTS project;');
+        await AppDataSource.query(`
+            CREATE TABLE IF NOT EXISTS project (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                serial_number INTEGER NOT NULL,
+                description TEXT
+            );
+        `);
+        console.log('Project table reset');
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.text}>About screen</Text>
             <Button title="添加任务" onPress={handleAddTask} />
             <Button title="获取任务" onPress={handleGetTasks} />
+            <Button title="获取所有项目" onPress={handleGetProjects} />
             <Button title="更新任务" onPress={handleUpdateTask} />
             <Button title="重建任务表（开发用）" onPress={handleResetTasksTable} />
             <Button title="批量导入测试数据" onPress={handleImportTestTasks} />
             <Button title="查看Meta表所有key-value" onPress={handleLogAllMeta} />
+            <Button title="重建项目表（开发用）" onPress={handleResetProjectTable} />
         </View>
     );
 }
