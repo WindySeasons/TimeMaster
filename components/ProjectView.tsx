@@ -1,12 +1,15 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, Chip } from 'react-native-paper';
+import { ProjectService } from '../app/services/ProjectService';
 
 type Props = {
 };
 const screenWidth = Dimensions.get('window').width;
 export default function ProjectView({ }: Props) {
+    const [projects, setProjects] = React.useState<{ id: number; name: string; serial_number: number; description?: string }[]>([]);
     const router = useRouter();
     const debounceRef = React.useRef<any>(null); // 兼容 web/原生 setTimeout
     const handleEditProjects = React.useCallback(() => {
@@ -17,6 +20,16 @@ export default function ProjectView({ }: Props) {
         router.push('/ProjectsEditPage');
     }, [router]);
 
+    // 页面切换到 cardLibrary 时自动刷新项目数据
+    useFocusEffect(
+        React.useCallback(() => {
+            (async () => {
+                const data = await ProjectService.getAllProjects();
+                setProjects(data);
+            })();
+        }, [])
+    );
+
     return (
 
         <View style={styles.container}>
@@ -24,27 +37,9 @@ export default function ProjectView({ }: Props) {
 
                 <Card.Content style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={[styles.chipContainer, { flexGrow: 1 }]} style={styles.scrollView} nestedScrollEnabled={true}>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed')} style={styles.chip}>Example Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 1')} style={styles.chip}>Star Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 2')} style={styles.chip}>Heart Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 3')} style={styles.chip}>Alert Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 4')} style={styles.chip}>ip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 5')} style={styles.chip}>Close Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 6')} style={styles.chip}>Account Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 7')} style={styles.chip}>Email Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 8')} style={styles.chip}>Phone Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 9')} style={styles.chip}>Calendar Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 10')} style={styles.chip}>Settings Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 1')} style={styles.chip}>Star Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 2')} style={styles.chip}>Heart Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 3')} style={styles.chip}>Alert Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 4')} style={styles.chip}>ip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 5')} style={styles.chip}>Close Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 6')} style={styles.chip}>Account Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 7')} style={styles.chip}>Email Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 8')} style={styles.chip}>Phone Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 9')} style={styles.chip}>Calendar Chip</Chip>
-                        <Chip mode="outlined" onPress={() => console.log('Pressed 10')} style={styles.chip}>Settings Chip</Chip>
+                        {projects.map(project => (
+                            <Chip key={project.id} mode="outlined" style={styles.chip}>{project.name}</Chip>
+                        ))}
                     </ScrollView>
                 </Card.Content>
 
