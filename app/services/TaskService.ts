@@ -38,8 +38,8 @@ export const getTasksByTimeRange = async (start: number, end: number) => {
         const taskRepository = AppDataSource.getRepository(Task);
         // 查询 end_time 在 [start, end] 区间的任务
         const tasks = await taskRepository.createQueryBuilder('task')
-            .where('task.start_time >= :start', { start })
-            .andWhere('task.start_time <= :end', { end })
+            .where('task.end_time >= :start', { start })
+            .andWhere('task.end_time <= :end', { end })
             .orderBy('task.end_time', 'DESC')
             .getMany();
         return tasks;

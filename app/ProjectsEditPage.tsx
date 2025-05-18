@@ -1,10 +1,10 @@
-import { BottomSheet, ButtonGroup, ListItem } from '@rneui/themed';
+import { BottomSheet, ListItem } from '@rneui/themed';
 import { Stack } from 'expo-router';
 import React, { useRef } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
-import { Button as PaperButton, Dialog as PaperDialog, Portal } from 'react-native-paper';
+import { FAB, Button as PaperButton, Dialog as PaperDialog, Portal } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
 import ProjectInputView from '../components/ProjectInputView';
 import { ProjectService } from './services/ProjectService';
@@ -13,7 +13,7 @@ const screenWidth = Dimensions.get('window').width;
 
 export default function ProjectsEditPage() {
     const [selectedIndex, setSelectedIndex] = React.useState(0);
-    const buttons = ['创建', '删除', '修改', '排序'];
+    const buttons = ['创建', '排序'];
     const [isSheetVisible, setIsSheetVisible] = React.useState(false);
     const [name, setName] = React.useState('');
     const [desc, setDesc] = React.useState('');
@@ -200,6 +200,46 @@ export default function ProjectsEditPage() {
         setPendingDeleteId(null);
     };
 
+    // 保存排序逻辑（如需持久化排序到数据库，可在此实现）
+    const handleSaveSort = async () => {
+        // 这里只是演示弹窗，可根据实际需求保存 serial_number 到数据库
+        // 例如遍历 projectList，依次更新 serial_number
+        for (let i = 0; i < projectList.length; i++) {
+            const p = projectList[i];
+            await ProjectService.updateProject(p.id, { serial_number: i + 1 });
+        }
+        // 刷新列表
+        const data = await ProjectService.getAllProjects();
+        setProjectList(data);
+    };
+
+    // 保存排序弹窗状态
+    const [saveSortConfirmVisible, setSaveSortConfirmVisible] = React.useState(false);
+    // 保存排序按钮点击
+    const handleSaveSortClick = () => {
+        setSaveSortConfirmVisible(true);
+    };
+    // 确认保存排序
+    const handleSaveSortConfirm = async () => {
+        setLoading(true);
+        try {
+            for (let i = 0; i < projectList.length; i++) {
+                const p = projectList[i];
+                await ProjectService.updateProject(p.id, { serial_number: i + 1 });
+            }
+            const data = await ProjectService.getAllProjects();
+            setProjectList(data);
+            setSaveSortConfirmVisible(false);
+        } catch (e) {
+            setError('保存排序失败');
+        }
+        setLoading(false);
+    };
+    // 取消保存排序
+    const handleSaveSortCancel = () => {
+        setSaveSortConfirmVisible(false);
+    };
+
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <Stack.Screen
@@ -212,54 +252,61 @@ export default function ProjectsEditPage() {
                 }}
             />
             <View style={styles.container}>
-                {false && showSwipeTip && (
-                    <View style={styles.swipeTipBanner}>
-                        <Text style={styles.swipeTipText}>提示：向左滑动项目可编辑或删除 👈</Text>
-                        <Text style={styles.swipeTipClose} onPress={() => setShowSwipeTip(false)}>×</Text>
-                    </View>
-                )}
-                <ButtonGroup
-                    onPress={handleButtonGroupPress}
-                    selectedIndex={selectedIndex}
-                    buttons={buttons}
-                    containerStyle={{ marginBottom: 24, width: screenWidth * 0.95, alignSelf: 'center', borderRadius: 8 }}
-                    buttonStyle={{ backgroundColor: '#25292e' }}
-                    selectedButtonStyle={{ backgroundColor: '#ffd33d' }}
-                    selectedTextStyle={{ color: '#25292e', fontWeight: 'bold' }}
-                    textStyle={{ color: '#fff', fontSize: 16 }}
-                />
-                <View style={{ flex: 1, width: '100%', marginBottom: 16 }}>
+                {/* 极简主义顶部操作区 */}
+                <View style={styles.topBarWrap}>
+                    <FAB
+                        icon="plus"
+                        color="#25292e"
+                        style={styles.fabCreateMinimal}
+                        onPress={() => {
+                            setSelectedIndex(0);
+                            setIsSheetVisible(true);
+                        }}
+                        size="small"
+                        label="添加项目"
+                    />
+                    <PaperButton
+                        mode="contained"
+                        onPress={handleSaveSortClick}
+                        style={styles.saveSortMinimal}
+                        labelStyle={{ color: '#fff', fontWeight: 'bold', fontSize: 15, letterSpacing: 1 }}
+                        icon="content-save"
+                    >
+                        保存排序
+                    </PaperButton>
+                </View>
+                {/* 极简列表区 */}
+                <View style={styles.listWrap}>
                     <DraggableFlatList
                         data={projectList}
                         keyExtractor={item => String(item.id)}
                         onDragEnd={handleDragEnd}
-                        renderItem={({ item, drag, isActive }: RenderItemParams<typeof projectList[0]>) => {
-                            return (
+                        renderItem={({ item, drag, isActive }: RenderItemParams<typeof projectList[0]>) => (
+                            <Animated.View style={{ marginHorizontal: 12, marginVertical: 6, borderRadius: 16, overflow: 'hidden', shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 8, elevation: isActive ? 6 : 2, backgroundColor: isActive ? '#ffe066' : '#fff' }}>
                                 <Swipeable
                                     ref={ref => { swipeableRefs.current[item.id] = ref; }}
-                                    renderRightActions={(progress, dragX, swipeable) => (
+                                    renderRightActions={() => (
                                         <View style={{ flexDirection: 'row', height: '100%' }}>
-                                            <View style={{ backgroundColor: '#409eff', height: '100%', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-                                                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }} onPress={() => {
+                                            <View style={{ backgroundColor: '#409eff', height: '100%', width: 72, justifyContent: 'center', alignItems: 'center' }}>
+                                                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 15 }} onPress={() => {
                                                     setEditProject({ id: item.id, name: item.name, description: item.description });
                                                     setEditName(item.name);
                                                     setEditDesc(item.description || '');
                                                     setEditSheetVisible(true);
                                                 }}>编辑</Text>
                                             </View>
-                                            <View style={{ backgroundColor: '#ff4d4f', height: '100%', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-                                                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }} onPress={() => handleDeletePress(item.id)}>删除</Text>
+                                            <View style={{ backgroundColor: '#ff4d4f', height: '100%', width: 72, justifyContent: 'center', alignItems: 'center', borderTopRightRadius: 16, borderBottomRightRadius: 16 }}>
+                                                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 15 }} onPress={() => handleDeletePress(item.id)}>删除</Text>
                                             </View>
                                         </View>
                                     )}
                                     overshootRight={false}
                                     onSwipeableOpen={() => {
-                                        // 关闭其它已打开的 Swipeable
                                         Object.entries(swipeableRefs.current).forEach(([id, ref]) => {
                                             if (id !== String(item.id) && ref) ref.close();
                                         });
                                         setOpenSwipeableId(String(item.id));
-                                        handleAnySwipe(); // 用户滑动时关闭提示
+                                        handleAnySwipe();
                                     }}
                                     onSwipeableClose={() => {
                                         if (openSwipeableId === String(item.id)) {
@@ -267,12 +314,25 @@ export default function ProjectsEditPage() {
                                         }
                                     }}
                                 >
-                                    <AnimatedListItem item={item} drag={drag} isActive={isActive} progress={undefined} />
+                                    <ListItem
+                                        key={item.id}
+                                        containerStyle={{ backgroundColor: 'transparent', borderRadius: 16, minHeight: 64, paddingVertical: 10, paddingHorizontal: 12 }}
+                                        onLongPress={drag}
+                                        style={{ flex: 1 }}
+                                    >
+                                        <ListItem.Content>
+                                            <ListItem.Title style={{ color: '#25292e', fontWeight: 'bold', fontSize: 17, letterSpacing: 0.5 }}>{item.name}</ListItem.Title>
+                                            {item.description ? (
+                                                <ListItem.Subtitle style={{ color: '#888', fontSize: 13, marginTop: 2 }}>{item.description}</ListItem.Subtitle>
+                                            ) : null}
+                                        </ListItem.Content>
+                                        <ListItem.Chevron color="#ffd33d" size={28} />
+                                    </ListItem>
                                 </Swipeable>
-                            );
-                        }}
+                            </Animated.View>
+                        )}
                         ListEmptyComponent={<View style={{ height: 40 }} />}
-                        contentContainerStyle={{ paddingBottom: 8 }}
+                        contentContainerStyle={{ paddingBottom: 16, paddingTop: 0 }}
                     />
                 </View>
                 <BottomSheet isVisible={isSheetVisible} onBackdropPress={() => setIsSheetVisible(false)}>
@@ -368,6 +428,43 @@ export default function ProjectsEditPage() {
                         </PaperDialog.Actions>
                     </PaperDialog>
                 </Portal>
+                {/* 保存排序确认弹窗 */}
+                <Portal>
+                    <PaperDialog
+                        visible={saveSortConfirmVisible}
+                        onDismiss={handleSaveSortCancel}
+                        style={{ backgroundColor: '#25292e', borderRadius: 16 }}
+                    >
+                        <PaperDialog.Title style={{ color: '#ffd33d', textAlign: 'center', fontWeight: 'bold', fontSize: 18, marginBottom: 0 }}>
+                            保存排序？
+                        </PaperDialog.Title>
+                        <PaperDialog.Content>
+                            <Text style={{ fontSize: 15, color: '#fff', textAlign: 'center', marginBottom: 0 }}>
+                                是否将当前项目顺序保存？
+                            </Text>
+                        </PaperDialog.Content>
+                        <PaperDialog.Actions style={{ justifyContent: 'center', marginBottom: 4 }}>
+                            <PaperButton
+                                mode="text"
+                                onPress={handleSaveSortCancel}
+                                style={{ borderRadius: 8, marginRight: 12 }}
+                                labelStyle={{ color: '#ffd33d', fontWeight: 'bold', fontSize: 16 }}
+                            >
+                                取消
+                            </PaperButton>
+                            <PaperButton
+                                mode="contained"
+                                onPress={handleSaveSortConfirm}
+                                style={{ backgroundColor: '#409eff', borderRadius: 8 }}
+                                labelStyle={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}
+                                loading={loading}
+                                disabled={loading}
+                            >
+                                保存
+                            </PaperButton>
+                        </PaperDialog.Actions>
+                    </PaperDialog>
+                </Portal>
             </View>
         </GestureHandlerRootView>
     );
@@ -378,8 +475,45 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#25292e',
     },
-    text: {
-        color: '#fff',
+    topBarWrap: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingTop: 18,
+        paddingBottom: 8,
+        backgroundColor: 'transparent',
+        zIndex: 10,
+    },
+    fabCreateMinimal: {
+        backgroundColor: '#ffd33d',
+        borderRadius: 24,
+        minWidth: 44,
+        height: 44,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+    },
+    saveSortMinimal: {
+        backgroundColor: '#409eff',
+        borderRadius: 22,
+        paddingHorizontal: 18,
+        paddingVertical: 2,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    listWrap: {
+        flex: 1,
+        width: '100%',
+        marginBottom: 16,
+        paddingTop: 0,
     },
     swipeTipBanner: {
         flexDirection: 'row',
