@@ -3,167 +3,123 @@
   <img src="assets/images/icon.png" width="120" alt="TimeMaster Logo" />
 </p>
 
-<h1 align="center">TimeMaster ⏰</h1>
-<p align="center"><b>让每一分钟都被善待</b></p>
+<h1 align="center" style="font-size:2.5rem;">TimeMaster ⏰</h1>
+<p align="center" style="font-size:1.2rem;"><b>让每一分钟都被善待</b></p>
+
+<p align="center" style="color:#ffd33d;font-size:1.1rem;">专注 · 高效 · 记录 · 成长</p>
 
 ---
 
-> “时间就像海绵里的水，只要愿挤，总还是有的。”  
-> <sub>—— TimeMaster 开发者寄语</sub>
+<blockquote align="center" style="font-style:italic; color:#888;">
+“时间就像海绵里的水，只要愿挤，总还是有的。”<br/>
+<sub>—— TimeMaster 开发者寄语</sub>
+</blockquote>
 
 ---
 
 # TimeMaster 项目 👋
 
-TimeMaster 是一个基于 [Expo](https://expo.dev) 的跨平台应用，旨在帮助用户高效管理时间和任务。
+> ⏳ <b>TimeMaster</b> 是一款基于 [Expo](https://expo.dev) 的极简跨平台时间管理应用，助你高效记录、反思与成长。
 
-## 功能特性
+## ✨ 功能特性
 
-- 📝 任务卡片式管理，支持项目、反思、打分等多维度记录
-- ⏳ 自动统计任务用时，支持时间区间筛选
-- 📊 数据可视化：时间统计、体验统计、感悟等
-- 🗂️ 项目库与任务库分离，支持项目预设与切换
-- 🖋️ 富文本编辑器，支持多样化内容输入（基于 Quill.js，WebView 集成）
-- 🌙 深色主题适配，界面美观现代
-- 📱 支持 Android/iOS 跨平台
+- 📝 <b>卡片式任务管理</b>：项目、反思、打分多维度记录
+- ⏱️ <b>自动统计用时</b>：支持时间区间筛选
+- 📊 <b>数据可视化</b>：用图表洞察你的时间分布与体验
+- 🗂️ <b>项目库/任务库分离</b>：支持项目预设与切换
+- 🖋️ <b>富文本编辑</b>：本地集成 Quill.js，支持多样化内容输入
+- 🌙 <b>深色主题</b>：现代美观，夜间更护眼
+- 📱 <b>全平台支持</b>：Android/iOS 一键切换
 
-## 技术栈
+## 🛠️ 技术栈
 
-- React Native + Expo
-- TypeORM + SQLite（本地数据库）
-- React Native Paper / RNEUI（UI 组件库）
-- Quill.js（富文本编辑器，WebView 集成，静态资源本地化于 assets/quill/）
-- TypeScript 全面类型安全
+- <b>React Native + Expo</b>
+- <b>TypeORM + SQLite</b>（本地数据库）
+- <b>React Native Paper / RNEUI</b>（UI 组件库）
+- <b>Quill.js</b>（富文本编辑器，静态资源本地化）
+- <b>TypeScript</b> 全面类型安全
 
-## 运行环境要求
+## 🚀 快速开始
 
-- Node.js >= 16.x
-- npm >= 8.x
-- Expo CLI >= 6.x
-- Android Studio（推荐）或 Xcode（Mac/iOS）
-
-## 快速开始
-
-1. **安装依赖**
-
+1. <b>安装依赖</b>
    ```bash
    npm install
    ```
-
-2. **启动应用**
-
+2. <b>启动应用</b>
    ```bash
    npx expo start
    ```
+   启动后可选择：
+   - Expo Go 扫码体验
+   - Android/iOS 模拟器
+   - 开发构建（推荐）
 
-   启动后，您可以选择以下方式运行应用：
+3. <b>本地静态资源说明</b>
+   - Quill.js 及样式已放于 `assets/quill/`，无需外网即可加载。
 
-   - [开发构建](https://docs.expo.dev/develop/development-builds/introduction/)
-   - [Android 模拟器](https://docs.expo.dev/workflow/android-studio-emulator/)
-   - [iOS 模拟器](https://docs.expo.dev/workflow/ios-simulator/)
-   - [Expo Go](https://expo.dev/go)：一个用于快速体验 Expo 应用开发的沙盒环境
+## 📦 构建 Android 安装包（APK）
 
-3. **本地静态资源说明**
+1. 确保已安装好 [Expo CLI](https://docs.expo.dev/get-started/installation/) 和 Android Studio（或已配置好 Android 环境变量）。
+2. 运行以下命令进行构建：
 
-   - Quill.js 及 quill.snow.css 已放置于 `assets/quill/` 目录，富文本编辑器无需外网即可加载。
-   - 若需升级 Quill 版本，请手动替换 `assets/quill/quill.js` 和 `assets/quill/quill.snow.css`。
+   ```bash
+   npx expo run:android --variant release
+   ```
+   或使用 EAS Build（推荐云端构建）：
+   ```bash
+   npx eas build -p android --profile production
+   ```
+   > EAS Build 需先登录并初始化：`npx eas login`、`npx eas build:configure`
 
-## 项目结构
+3. 构建完成后，APK 文件会在本地 `android/app/build/outputs/apk/release/` 目录下，或 EAS 云端下载链接中。
+4. 将 APK 安装包发送到手机或通过模拟器安装，即可体验正式版。
 
-以下是项目的主要目录结构：
+## 🗂️ 项目结构
 
 ```
 TimeMaster/
-├── app/                     # 应用主目录
-│   ├── _layout.tsx          # 全局布局文件
-│   ├── database.ts          # 数据库配置和初始化
-│   ├── entities/            # TypeORM 实体
-│   │   └── Task.ts          # 任务实体
-│   ├── services/            # 服务层逻辑
-│   │   └── TaskService.ts   # 任务相关的增删改查逻辑
-│   ├── (tabs)/              # 基于文件的路由
-│   │   ├── _layout.tsx      # 标签页布局
-│   │   ├── about.tsx        # 关于页面
-│   │   ├── cardLibrary.tsx  # 卡片库页面
-│   │   ├── index.tsx        # 首页
-│   │   └── summary.tsx      # 总结页面
-├── components/              # 可复用的 UI 组件
-│   ├── Button.tsx           # 按钮组件
-│   ├── DataPickerView.tsx   # 日期选择组件
-│   ├── ImageViewer.tsx      # 图片查看器组件
-│   ├── ProjectView.tsx      # 项目视图组件
-│   └── TaskCard.tsx         # 任务卡片组件
-├── assets/                  # 静态资源
-│   ├── fonts/               # 字体文件
-│   └── images/              # 图片资源
-├── scripts/                 # 实用脚本
-│   └── reset-project.js     # 项目重置脚本
-├── package.json             # 项目依赖和脚本
-├── tsconfig.json            # TypeScript 配置
-├── app.json                 # Expo 配置
-└── README.md                # 项目说明文件
+├── app/                # 应用主目录
+│   ├── _layout.tsx     # 全局布局
+│   ├── database.ts     # 数据库配置
+│   ├── entities/       # TypeORM 实体
+│   ├── services/       # 业务逻辑
+│   ├── (tabs)/         # 路由页面
+│   └── ...
+├── components/         # 通用 UI 组件
+├── assets/             # 静态资源
+├── scripts/            # 实用脚本
+├── package.json        # 依赖与脚本
+└── README.md           # 项目说明
 ```
 
-## 常用命令
+## 🧑‍💻 开发建议
 
-- **安装依赖**：
-  ```bash
-  npm install
-  ```
+- 推荐使用 <b>VSCode + Prettier/ESLint</b> 保持代码风格统一
+- 组件建议拆分到 `components/`，业务逻辑放在 `services/`
+- 富文本编辑器自定义可修改 `components/QuillEditor.tsx` 及 `assets/quill/`
+- 数据库结构变更请同步更新 `entities/` 和 `services/`
 
-- **启动开发服务器**：
-  ```bash
-  npx expo start
-  ```
+## ❓ 常见问题 FAQ
 
-- **构建 Android APK**：
-  ```bash
-  npx expo run:android
-  ```
+- <b>富文本编辑器无法输入/显示异常？</b>
+  - 请确保 WebView 权限正常，且 `assets/quill/` 下资源完整。
+- <b>如何重置数据库或清空所有任务？</b>
+  - 可在 about.tsx 页面或 scripts/reset-project.js 脚本中执行重置操作。
+- <b>如何导入/导出任务数据？</b>
+  - 目前仅支持本地存储，后续可扩展云同步或导出功能。
+- <b>如何自定义主题或样式？</b>
+  - 可修改 components/ 下的样式文件或自定义 UI 组件。
 
-- **构建 iOS 应用**（需 macOS 和 Xcode）：
-  ```bash
-  npx expo run:ios
-  ```
+## 🤝 贡献指南
 
-- **清理缓存**：
-  ```bash
-  npx expo start -c
-  ```
-
-## 开发建议
-
-- 推荐使用 VSCode + Prettier/ESLint 保持代码风格统一。
-- 组件开发建议拆分到 `components/`，业务逻辑放在 `services/`。
-- 富文本编辑器如需自定义工具栏或样式，可修改 `components/QuillEditor.tsx` 及 `assets/quill/` 下资源。
-- 数据库结构变更请同步更新 `entities/` 和 `services/`。
-
-## 常见问题 FAQ
-
-- **Q: 富文本编辑器无法输入/显示异常？**
-  A: 请确保 WebView 权限正常，且 `assets/quill/` 下资源完整。
-
-- **Q: 如何重置数据库或清空所有任务？**
-  A: 可在 about.tsx 页面或 scripts/reset-project.js 脚本中执行重置操作。
-
-- **Q: 如何导入/导出任务数据？**
-  A: 目前仅支持本地存储，后续可扩展云同步或导出功能。
-
-- **Q: 如何自定义主题或样式？**
-  A: 可修改 components/ 下的样式文件或自定义 UI 组件。
-
-- **Q: Quill 编辑器的 divider/分割线等自定义功能如何扩展？**
-  A: 参考 `components/QuillEditor.tsx`，可自定义 toolbar、blot 等。
-
-## 贡献
-
-欢迎贡献代码！请提交 Pull Request 或报告问题。
-
+欢迎贡献代码！
 - Fork 本仓库并新建分支
 - 保持代码风格统一，建议使用 Prettier/ESLint
 - 提交前请确保通过所有单元测试
 - PR 请详细描述变更内容和动机
 
-## 许可证
+## 📄 许可证
 
 本项目基于 MIT 许可证开源。详见 [LICENSE](./LICENSE)。
+
+<p align="center" style="color:#ffd33d;font-size:1.1rem;">TimeMaster · 让每一分钟都被善待</p>
