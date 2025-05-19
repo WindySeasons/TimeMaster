@@ -32,7 +32,9 @@ export default function CardLibraryScreen() {
             if (range.startDate && range.endDate) {
                 const start = Math.floor(range.startDate.getTime() / 1000);
                 const end = Math.floor(range.endDate.getTime() / 1000);
+                console.log('Fetching tasks from', start, 'to', end);
                 const data = await getTasksByTimeRange(start, end);
+                console.log('Fetched tasks:', data);
                 setTasks(data);
             } else {
                 setTasks([]);
@@ -43,8 +45,18 @@ export default function CardLibraryScreen() {
     };
 
     const onRangeChange = (range: { startDate: Date | null; endDate: Date | null }) => {
-        setDateRange(range);
-        fetchTasks(range);
+        // 自动补全：startDate设为0点，endDate设为23:59:59.999
+        let { startDate, endDate } = range;
+        if (startDate) {
+            startDate = new Date(startDate);
+            startDate.setHours(0, 0, 0, 0);
+        }
+        if (endDate) {
+            endDate = new Date(endDate);
+            endDate.setHours(23, 59, 59, 999);
+        }
+        setDateRange({ startDate, endDate });
+        fetchTasks({ startDate, endDate });
     };
 
     const onRefresh = () => {
@@ -134,7 +146,7 @@ export default function CardLibraryScreen() {
                         key={task.id}
                         starRating={task.rating || 1}
                         taskName={task.project_name}
-                        dueDate={task.end_time ? new Date(task.end_time * 1000).toLocaleString() : ''}
+                        dueDate={task.end_time ? new Date(task.end_time * 1000).toLocaleString(undefined, { hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}
                         duration={task.duration ? formatDuration(task.duration) : ''}
                         taskThoughts={task.reflection || ''}
                         leftContent={() => <Text>📋</Text>}

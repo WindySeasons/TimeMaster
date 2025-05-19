@@ -154,29 +154,6 @@ export default function ProjectsEditPage() {
     // 当前已打开的 Swipeable id
     const [openSwipeableId, setOpenSwipeableId] = React.useState<string | null>(null);
 
-    // 滑动删除提示 Banner
-    const [showSwipeTip, setShowSwipeTip] = React.useState(false);
-    // 是否已自动演示过滑动
-    const [hasShownSwipeDemo, setHasShownSwipeDemo] = React.useState(false);
-    // 首次有数据时自动滑开第一个ListItem
-    React.useEffect(() => {
-        if (projectList.length > 0 && !hasShownSwipeDemo) {
-            const firstId = String(projectList[0].id);
-            setTimeout(() => {
-                const ref = swipeableRefs.current[firstId];
-                if (ref && typeof ref.openRight === 'function') {
-                    ref.openRight();
-                    setHasShownSwipeDemo(true);
-                }
-            }, 500); // 延迟，确保ref已挂载
-        }
-    }, [projectList, hasShownSwipeDemo]);
-    // 用户滑动任意 ListItem 时关闭自动演示
-    const handleAnySwipe = () => {
-        if (!hasShownSwipeDemo) setHasShownSwipeDemo(true);
-        if (showSwipeTip) setShowSwipeTip(false);
-    };
-
     // 删除确认弹窗状态
     const [deleteConfirmVisible, setDeleteConfirmVisible] = React.useState(false);
     const [pendingDeleteId, setPendingDeleteId] = React.useState<number | null>(null);
@@ -306,7 +283,7 @@ export default function ProjectsEditPage() {
                                             if (id !== String(item.id) && ref) ref.close();
                                         });
                                         setOpenSwipeableId(String(item.id));
-                                        handleAnySwipe();
+                                        // handleAnySwipe(); // 删除演示提示相关逻辑
                                     }}
                                     onSwipeableClose={() => {
                                         if (openSwipeableId === String(item.id)) {

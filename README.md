@@ -74,6 +74,56 @@
 3. 构建完成后，APK 文件会在本地 `android/app/build/outputs/apk/release/` 目录下，或 EAS 云端下载链接中。
 4. 将 APK 安装包发送到手机或通过模拟器安装，即可体验正式版。
 
+> ⚠️ 注意：\
+> 使用 `npx expo run:android --variant release` 构建 release 包时，生成的 APK 会使用本地静态 JS bundle（assets/index.android.bundle），\
+> 如果你没有手动重新打包 JS 资源或清理缓存，可能会导致安装到手机上的不是最新代码。\
+> 构建 release 包前，建议先运行 `npx expo export --platform android` 或 `npx expo prebuild`，确保 JS 代码为最新。
+
+## 📦 本地构建 Android Debug/Release 版共存方法
+
+Expo/React Native 项目如需让 debug 版和 release 版同时安装在手机上，需为不同版本设置不同的 `android.package`。
+
+### 步骤
+
+1. **修改 app.json 的 package 字段**
+
+- Debug 版（开发包）
+  ```json
+  "android": {
+    ...,
+    "package": "com.huachen.timemaster.dev"
+  }
+  ```
+- Release 版（正式包）
+  ```json
+  "android": {
+    ...,
+    "package": "com.huachen.timemaster"
+  }
+  ```
+
+2. **构建并安装**
+
+- 构建 debug 版：
+  ```bash
+  npx expo run:android --variant debug
+  ```
+- 构建 release 版：
+  ```bash
+  npx expo run:android --variant release
+  ```
+
+3. **注意事项**
+- 两个包名不同，手机上可共存。
+- 构建前请确认 app.json 中 `android.package` 已切换为目标版本的包名。
+- EAS Build 也可通过 eas.json 的 profile 设置不同包名。
+
+> 示例：
+> - Debug 包名：com.huachen.timemaster.dev
+> - Release 包名：com.huachen.timemaster
+
+---
+
 ## 🗂️ 项目结构
 
 ```

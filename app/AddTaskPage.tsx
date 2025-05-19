@@ -2,6 +2,7 @@ import { Button, Input } from '@rneui/themed';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+    Keyboard,
     Text as RNText,
     ScrollView,
     StyleSheet, TextInput, TouchableOpacity,
@@ -11,6 +12,7 @@ import { Card } from 'react-native-paper';
 import QuillEditor from '../components/QuillEditor';
 import { AppDataSource, globalCurrentTaskId } from './database';
 import { Task } from './entities/Task';
+import { ProjectService } from './services/ProjectService';
 import { addTask, updateTask } from './services/TaskService';
 
 export default function AddTaskPage() {
@@ -117,6 +119,74 @@ export default function AddTaskPage() {
         setLoading(false);
     };
 
+    // 下一个项目选择浮层相关
+    const [showProjectList, setShowProjectList] = useState(false);
+    const [allProjects, setAllProjects] = useState<{ id: number; name: string; serial_number: number }[]>([]);
+    const [filteredProjects, setFilteredProjects] = useState<typeof allProjects>([]);
+
+    // 输入框聚焦时加载项目列表（每次都强制刷新，保证编辑后能实时更新）
+    const handleNextProjectFocus = async () => {
+        setShowProjectList(true);
+        try {
+            const projects = await ProjectService.getAllProjects();
+            const sorted = projects.sort((a, b) => a.serial_number - b.serial_number);
+            setAllProjects(sorted);
+            setFilteredProjects(
+                nextProject.trim()
+                    ? sorted.filter(p => p.name.toLowerCase().startsWith(nextProject.trim().toLowerCase()))
+                    : sorted
+            );
+        } catch (e) {
+            setAllProjects([]);
+            setFilteredProjects([]);
+        }
+    };
+    // 标记是否点击了Chip
+    const chipClickRef = useRef(false);
+    // 输入框失焦时关闭浮层（仅非点击Chip时才关闭，且不与Chip延迟冲突）
+    const handleNextProjectBlur = () => {
+        if (chipClickRef.current) {
+            // 如果是点击Chip导致的失焦，不做任何关闭，交由handleSelectProject延迟关闭
+            return;
+        }
+        setTimeout(() => {
+            setShowProjectList(false);
+        }, 1020);
+    };
+    // 输入时动态筛选
+    const handleNextProjectChange = (text: string) => {
+        setNextProject(text);
+        if (showProjectList) {
+            setFilteredProjects(
+                text.trim()
+                    ? allProjects.filter(p => p.name.toLowerCase().startsWith(text.trim().toLowerCase()))
+                    : allProjects
+            );
+        }
+    };
+    // 选择项目
+    const handleSelectProject = (name: string) => {
+        chipClickRef.current = true;
+        Keyboard.dismiss(); // 先收起输入法
+        setNextProject(name); // 自动填充到输入框
+        // 延迟关闭浮层，给输入法收起留出时间
+        setTimeout(() => {
+            setShowProjectList(false);
+        }, 1350); // 1350ms，体验更流畅
+    };
+
+    // 防抖函数
+    const debounce = (fn: (...args: any[]) => void, delay = 700) => {
+        let timer: ReturnType<typeof setTimeout> | null = null;
+        return (...args: any[]) => {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
+    };
+    const debouncedEditProjects = React.useMemo(() => debounce(() => {
+        router.push('/ProjectsEditPage');
+    }), [router]);
+
     return (
         <>
             <Stack.Screen
@@ -189,19 +259,103 @@ export default function AddTaskPage() {
                             minHeight: 350,
                         }}
                     />
-                    <Input
-                        ref={nextProjectInputRef}
-                        containerStyle={{ marginTop: 0, marginBottom: 0, paddingHorizontal: 0 }}
-                        inputContainerStyle={{ borderBottomWidth: 0, borderWidth: 0, elevation: 0, backgroundColor: 'transparent', paddingHorizontal: 0 }}
-                        inputStyle={{ fontSize: 14, color: '#25292e', backgroundColor: '#fff', borderRadius: 0, paddingHorizontal: 0, minHeight: 50, width: '100%' }}
-                        placeholder="下一个项目，用/分级（必填）"
-                        value={nextProject}
-                        onChangeText={setNextProject}
-                        leftIconContainerStyle={{}}
-                        rightIconContainerStyle={{}}
-                        errorMessage={undefined}
-                        renderErrorMessage={false}
-                    />
+                    {/* 项目选择Chip流式浮层（显示在“下一个项目”输入框正上方，底边紧贴输入框上界） */}
+                    <View style={{ position: 'relative' }}>
+                        <Input
+                            ref={nextProjectInputRef}
+                            containerStyle={{ marginTop: 0, marginBottom: 0, paddingHorizontal: 0 }}
+                            inputContainerStyle={{ borderBottomWidth: 0, borderWidth: 0, elevation: 0, backgroundColor: 'transparent', paddingHorizontal: 0 }}
+                            inputStyle={{ fontSize: 14, color: '#25292e', backgroundColor: '#fff', borderRadius: 0, paddingHorizontal: 0, minHeight: 50, width: '100%' }}
+                            placeholder="下一个项目，用/分级（必填）"
+                            value={nextProject}
+                            onChangeText={handleNextProjectChange}
+                            onFocus={handleNextProjectFocus}
+                            onBlur={handleNextProjectBlur}
+                            leftIconContainerStyle={{}}
+                            rightIconContainerStyle={{}}
+                            errorMessage={undefined}
+                            renderErrorMessage={false}
+                        />
+                        {showProjectList && (
+                            <View
+                                style={{
+                                    position: 'absolute',
+                                    left: 0,
+                                    right: 0,
+                                    bottom: '100%', // 紧贴Input上界
+                                    marginBottom: 6, // 与输入框间距（可调）
+                                    maxHeight: 200,
+                                    backgroundColor: '#fff',
+                                    borderRadius: 8,
+                                    shadowColor: '#000',
+                                    shadowOffset: { width: 0, height: 2 },
+                                    shadowOpacity: 0.12,
+                                    shadowRadius: 8,
+                                    zIndex: 999,
+                                    borderWidth: 1,
+                                    borderColor: '#eee',
+                                    overflow: 'hidden',
+                                    padding: 10,
+                                    flexDirection: 'column',
+                                    justifyContent: 'flex-end',
+                                }}
+                            >
+                                <ScrollView
+                                    style={{ maxHeight: 200 }}
+                                    contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start' }}
+                                    keyboardShouldPersistTaps="handled"
+                                >
+                                    {filteredProjects.length > 0 ? filteredProjects.map(p => (
+                                        <TouchableOpacity
+                                            key={p.id}
+                                            onPress={() => handleSelectProject(p.name)}
+                                            activeOpacity={0.7}
+                                            style={{
+                                                backgroundColor: '#f5f5f5',
+                                                borderRadius: 16,
+                                                paddingHorizontal: 14,
+                                                paddingVertical: 7,
+                                                margin: 5,
+                                                borderWidth: 1,
+                                                borderColor: '#e0e0e0',
+                                                shadowColor: '#000',
+                                                shadowOffset: { width: 0, height: 1 },
+                                                shadowOpacity: 0.06,
+                                                shadowRadius: 2,
+                                            }}
+                                        >
+                                            <RNText style={{ fontSize: 14, color: '#25292e' }}>{p.name}</RNText>
+                                        </TouchableOpacity>
+                                    )) : (
+                                        <View style={{ padding: 16, alignItems: 'center', width: '100%' }}>
+                                            <RNText style={{ color: '#888', fontSize: 14 }}>无匹配项目</RNText>
+                                        </View>
+                                    )}
+                                    {/* 编辑预设项目Chip */}
+                                    <TouchableOpacity
+                                        key="edit-preset-projects"
+                                        onPress={debouncedEditProjects}
+                                        activeOpacity={0.7}
+                                        style={{
+                                            backgroundColor: '#e3f2fd',
+                                            borderRadius: 16,
+                                            paddingHorizontal: 14,
+                                            paddingVertical: 7,
+                                            margin: 5,
+                                            borderWidth: 1,
+                                            borderColor: '#90caf9',
+                                            shadowColor: '#000',
+                                            shadowOffset: { width: 0, height: 1 },
+                                            shadowOpacity: 0.06,
+                                            shadowRadius: 2,
+                                        }}
+                                    >
+                                        <RNText style={{ fontSize: 14, color: '#1976d2', fontWeight: 'bold' }}>编辑预设项目</RNText>
+                                    </TouchableOpacity>
+                                </ScrollView>
+                            </View>
+                        )}
+                    </View>
                     <View
                         style={{
                             flexDirection: 'row',

@@ -1,4 +1,4 @@
-package com.huachen.TimeMaster
+package com.huachen.Timemaster.dev
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
