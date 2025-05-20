@@ -91,6 +91,17 @@ export default function CardLibraryScreen() {
         return result;
     }
 
+    // 获取 DataPickerView 当前按钮上的字（即日期范围字符串）
+    function getDateRangeTitle() {
+        if (!dateRange.startDate || !dateRange.endDate) return '';
+        const start = dateRange.startDate;
+        const end = dateRange.endDate;
+        // 格式：2024-05-01 ~ 2024-05-20
+        const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        return `${fmt(start)} ~ ${fmt(end)}`;
+    }
+    const dateRangeTitle = getDateRangeTitle();
+
     return (
         <View style={{ flex: 1, backgroundColor: '#25292e' }}>
             <ScrollView
@@ -126,7 +137,7 @@ export default function CardLibraryScreen() {
                         mode="contained"
                         style={[styles.iconButton, { backgroundColor: '#f5f5f5' }]} // 极简主义浅灰背景
                         labelStyle={{ fontSize: 12, color: '#000' }} // 黑色字体
-                        onPress={() => router.push('/TimeChartPage')}
+                        onPress={() => router.push({ pathname: '/TimeChartPage', params: { tasks: JSON.stringify(tasks), dateRangeTitle } })}
                     >
                         <Text>时间统计</Text>
                     </Button>

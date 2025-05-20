@@ -387,7 +387,7 @@ export default function AddTaskPage() {
                             </TouchableOpacity>
                         ))}
                         <RNText style={{ fontSize: 22, marginLeft: 10, fontFamily: 'serif', textShadowColor: '#ffd33d44', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>
-                            {rating === 1 ? '😞' : rating === 2 ? '😐' : '😄'}
+                            {rating === 1 ? '🥶' : rating === 2 ? '🙂' : '😍'}
                         </RNText>
                     </View>
                 </Card>

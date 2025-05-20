@@ -41,7 +41,10 @@ export default function TaskCard({ leftContent = LeftContent, taskName, dueDate,
                             </Text>
                         </Pressable>
                     </View>
-                    <Text variant="bodyMedium" style={styles.rating}>{"★".repeat(starRating)}</Text>
+                    {/* 星级用emoji表示 */}
+                    <Text variant="bodyMedium" style={styles.rating}>
+                        {starRating === 1 ? '🥶' : starRating === 2 ? '🙂' : starRating === 3 ? '😍' : ''}
+                    </Text>
                 </View>
                 <View style={{ minHeight: 40, marginTop: 8 }}>
                     <WebView
@@ -116,7 +119,7 @@ const styles = StyleSheet.create({
     },
     chipText: {
         color: '#0288d1',
-        fontSize: 10,
+        fontSize: 8,
     },
     editIcon: {
         transform: [{ scale: 0.8 }],
