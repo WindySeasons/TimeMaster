@@ -103,7 +103,7 @@ export default function AboutScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>About screen a</Text>
+            <Text style={styles.text}>About screen</Text>
             <Button title="添加任务" onPress={handleAddTask} />
             <Button title="获取任务" onPress={handleGetTasks} />
             <Button title="获取所有项目" onPress={handleGetProjects} />

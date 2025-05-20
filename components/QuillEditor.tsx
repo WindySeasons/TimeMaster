@@ -3,9 +3,9 @@ import React, { useEffect, useRef } from 'react';
 import { WebView } from 'react-native-webview';
 
 interface QuillEditorProps {
-    value: string;
-    onChange?: (value: string) => void;
-    style?: any;
+  value: string;
+  onChange?: (value: string) => void;
+  style?: any;
 }
 
 const quillTemplate = `
@@ -13,7 +13,7 @@ const quillTemplate = `
 <html>
 <head>
   <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <link href="file:///android_asset/quill/quill.snow.css" rel="stylesheet">
   <style>
     #editor {
       width: 100%;
@@ -46,7 +46,7 @@ const quillTemplate = `
 </head>
 <body>
   <div id="editor"></div>
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="file:///android_asset/quill/quill.js"></script>
   <style>
     /* 自定义divider按钮图标样式 */
     .ql-divider::before {
@@ -116,60 +116,60 @@ const quillTemplate = `
 `;
 
 export default function QuillEditor({ value, onChange, style }: QuillEditorProps) {
-    const webviewRef = useRef(null);
-    const [html, setHtml] = React.useState<string | null>(null);
+  const webviewRef = useRef(null);
+  const [html, setHtml] = React.useState<string | null>(null);
 
-    useEffect(() => {
-        // 读取模板内容
-        (async () => {
-            // Expo/React Native: 只能用 FileSystem 读取本地 html
-            const templatePath = FileSystem.bundleDirectory
-                ? FileSystem.bundleDirectory + 'assets/templates/quill-template.html'
-                : FileSystem.documentDirectory + 'templates/quill-template.html';
-            try {
-                const htmlContent = await FileSystem.readAsStringAsync(templatePath);
-                setHtml(htmlContent);
-            } catch (e) {
-                setHtml('<p>无法加载编辑器模板</p>');
-            }
-        })();
-    }, []);
+  useEffect(() => {
+    // 读取模板内容
+    (async () => {
+      // Expo/React Native: 只能用 FileSystem 读取本地 html
+      const templatePath = FileSystem.bundleDirectory
+        ? FileSystem.bundleDirectory + 'assets/templates/quill-template.html'
+        : FileSystem.documentDirectory + 'templates/quill-template.html';
+      try {
+        const htmlContent = await FileSystem.readAsStringAsync(templatePath);
+        setHtml(htmlContent);
+      } catch (e) {
+        setHtml('<p>无法加载编辑器模板</p>');
+      }
+    })();
+  }, []);
 
-    // 向 WebView 发送内容
-    useEffect(() => {
-        if (webviewRef.current && value && html) {
-            // 发送 setContents 消息
-            (webviewRef.current as any).postMessage(JSON.stringify({ type: 'setContents', value }));
-        }
-    }, [value, html]);
-
-    // 处理 WebView 消息
-    const handleMessage = (event: any) => {
-        try {
-            const data = JSON.parse(event.nativeEvent.data);
-            if ((data.type === 'textChange' || data.type === 'content-change') && onChange) {
-                onChange(data.content || data.value);
-            }
-        } catch { }
-    };
-
-    if (!html) {
-        return null;
+  // 向 WebView 发送内容
+  useEffect(() => {
+    if (webviewRef.current && value && html) {
+      // 发送 setContents 消息
+      (webviewRef.current as any).postMessage(JSON.stringify({ type: 'setContents', value }));
     }
+  }, [value, html]);
 
-    return (
+  // 处理 WebView 消息
+  const handleMessage = (event: any) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      if ((data.type === 'textChange' || data.type === 'content-change') && onChange) {
+        onChange(data.content || data.value);
+      }
+    } catch { }
+  };
 
-        <WebView
-            ref={webviewRef}
-            originWhitelist={["*"]}
-            source={{ html: quillTemplate }}
-            style={[{ backgroundColor: '#fff' }, style]}
-            javaScriptEnabled
-            domStorageEnabled
-            onMessage={handleMessage}
-            // 允许 WebView 访问本地资源
-            allowFileAccess
-            allowUniversalAccessFromFileURLs
-        />
-    );
+  if (!html) {
+    return null;
+  }
+
+  return (
+
+    <WebView
+      ref={webviewRef}
+      originWhitelist={["*"]}
+      source={{ html: quillTemplate }}
+      style={[{ backgroundColor: '#fff' }, style]}
+      javaScriptEnabled
+      domStorageEnabled
+      onMessage={handleMessage}
+      // 允许 WebView 访问本地资源
+      allowFileAccess
+      allowUniversalAccessFromFileURLs
+    />
+  );
 }

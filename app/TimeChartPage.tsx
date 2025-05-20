@@ -88,7 +88,7 @@ h4{color:#222;text-align:center;margin:12px 0 0 0;}
 <body>
 <h4 style="margin-top: 10px;">${dateRangeTitle}</h4>
 <div id='main'></div>
-<script src='https://cdn.staticfile.org/echarts/5.4.3/echarts.min.js'></script>
+<script src='file:///android_asset/echarts/echarts.min.js'></script>
 <script>
 (function(){
 var data = ${JSON.stringify(pieData.map(item => ({
