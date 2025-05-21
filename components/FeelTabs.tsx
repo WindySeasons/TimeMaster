@@ -33,9 +33,9 @@ const FeelTabs: React.FC<FeelTabsProps> = ({ grouped }) => {
     ];
     // 汇总内容
     const summary = [
-        { label: '待提升', value: grouped[1]?.totalDuration || 0 },
-        { label: '常规', value: grouped[2]?.totalDuration || 0 },
         { label: '超赞', value: grouped[3]?.totalDuration || 0 },
+        { label: '常规', value: grouped[2]?.totalDuration || 0 },
+        { label: '待提升', value: grouped[1]?.totalDuration || 0 },
     ];
     const screenHeight = Dimensions.get('window').height;
     // 项目内容

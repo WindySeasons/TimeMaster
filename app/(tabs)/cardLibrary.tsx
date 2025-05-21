@@ -155,6 +155,7 @@ export default function CardLibraryScreen() {
                 {tasks.map(task => (
                     <TaskCard
                         key={task.id}
+                        task={task}
                         starRating={task.rating || 1}
                         taskName={task.project_name}
                         dueDate={task.end_time ? new Date(task.end_time * 1000).toLocaleString(undefined, { hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}

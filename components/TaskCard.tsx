@@ -1,13 +1,16 @@
+import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { useState } from 'react';
 import { Dimensions, Modal, Pressable, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { Avatar, Card, IconButton, Text } from 'react-native-paper';
 import { WebView } from 'react-native-webview';
+import { Task } from '../app/entities/Task';
 
 const LeftContent = (props: any) => <Avatar.Icon {...props} icon="folder" />;
 
 type Props = {
     leftContent?: (props: any) => React.ReactNode;
+    task: Task;
     taskName: string;
     dueDate: string;
     starRating: number; // 1 to 3
@@ -17,17 +20,18 @@ type Props = {
 
 const screenWidth = Dimensions.get('window').width;
 
-export default function TaskCard({ leftContent = LeftContent, taskName, dueDate, starRating, taskThoughts, duration }: Props) {
+export default function TaskCard({ leftContent = LeftContent, task, taskName, dueDate, starRating, taskThoughts, duration }: Props) {
     const [modalVisible, setModalVisible] = useState(false);
     const [webViewHeight, setWebViewHeight] = useState(40);
     const displayName = taskName.length > 6 ? `${taskName.substring(0, 6)}...` : taskName;
+    const router = useRouter();
 
     return (
         <Card style={styles.card}>
             <Card.Content>
                 <IconButton
                     icon="pencil"
-                    onPress={() => console.log('Edit pressed')}
+                    onPress={() => router.push({ pathname: '/EditTaskPage', params: { task: JSON.stringify(task) } })}
                     style={[styles.editIcon, { position: 'absolute', right: 0, top: 0 }]}
                 />
                 <View style={styles.topRow}>
