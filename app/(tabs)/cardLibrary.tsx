@@ -146,7 +146,7 @@ export default function CardLibraryScreen() {
                         mode="contained"
                         style={[styles.iconButton, { backgroundColor: '#f5f5f5' }]} // 极简主义浅灰背景
                         labelStyle={{ fontSize: 12, color: '#000' }} // 黑色字体
-                        onPress={() => router.push('/FeelChartPage')}
+                        onPress={() => router.push({ pathname: '/FeelChartPage', params: { tasks: JSON.stringify(tasks), dateRangeTitle } })}
                     >
                         <Text>体验统计</Text>
                     </Button>
