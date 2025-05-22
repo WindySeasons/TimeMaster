@@ -115,7 +115,15 @@ export default function CardLibraryScreen() {
                 <ProjectView>
 
                 </ProjectView>
-
+                <Button
+                    mode="contained"
+                    style={[styles.iconButton, { backgroundColor: '#f5f5f5', marginTop: 10, marginBottom: 6, borderRadius: 3 }]} // 极简主义浅灰背景
+                    labelStyle={{ fontSize: 14, color: '#000', fontFamily: 'serif', letterSpacing: 1.2, fontWeight: 'bold' }}
+                    onPress={() => router.push('/AdditionalTaskPage')}
+                    icon={() => <Icon name="plus-circle-outline" size={22} color="#4caf50" />}
+                >
+                    <Text>补充记录</Text>
+                </Button>
                 <DataPickerView
                     startDate={dateRange.startDate}
                     endDate={dateRange.endDate}
